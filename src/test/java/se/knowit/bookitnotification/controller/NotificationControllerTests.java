@@ -45,6 +45,6 @@ public class NotificationControllerTests {
         mockMvc.perform(post(PATH)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(incomingJson))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 }

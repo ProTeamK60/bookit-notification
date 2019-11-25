@@ -24,7 +24,7 @@ public class NotificationController {
     @PostMapping(value={"/registration", "/registration/"}, consumes = "application/json", produces = "application/json")
     public ResponseEntity<String> createRegistrationConfirmation(@RequestBody NotificationDTO dto) {
         service.sendRegistrationNotificationAsync(mapper.fromDto(dto));
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
 }
