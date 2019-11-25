@@ -32,13 +32,6 @@ public class NotificationServiceTests {
     @Mock
     private JavaMailSender mailSender;
 
-    private SimpleMailMessage message;
-
-    @BeforeEach
-    public void setup() {
-        message = new SimpleMailMessage();
-    }
-
     @Test
     public void testSendNotification() {
         Notification notification = new Notification();
