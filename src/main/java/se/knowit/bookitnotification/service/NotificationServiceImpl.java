@@ -30,7 +30,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void sendRegistrationNotification(Notification notification) throws IllegalArgumentException, MailException {
+    public void sendRegistrationNotification(Notification notification) {
         Notification validNotification = validator.validateNotificationOrElseThrowException(notification);
         mailSender.send(fromRegistrationTemplate(validNotification));
     }

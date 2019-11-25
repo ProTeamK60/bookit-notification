@@ -10,18 +10,18 @@ public class NotificationValidator {
         return notification;
     }
 
+    private void validateEventId(UUID eventId) {
+        if(eventId == null || eventId.toString().isBlank()) {
+            throw new IllegalArgumentException("Invalid eventId: " + eventId);
+        }
+    }
+
     private void validateParticipant(Participant participant) {
         if(participant == null) {
             throw new IllegalArgumentException("Null participant");
         }
         if(isNullOrBlank(participant.getEmail()) || !participant.getEmail().matches("^(.+)@(.+)$")) {
             throw new IllegalArgumentException("Invalid email " + participant.getEmail());
-        }
-    }
-
-    private void validateEventId(UUID eventId) {
-        if(eventId == null || eventId.toString().isBlank()) {
-            throw new IllegalArgumentException("Invalid eventId: " + eventId);
         }
     }
 
