@@ -16,7 +16,7 @@ import java.util.UUID;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class NotificationServiceTests {
+class NotificationServiceTests {
 
     private static final UUID DEFAULT_UUID = UUID.randomUUID();
 
@@ -26,14 +26,24 @@ public class NotificationServiceTests {
     @Mock
     private JavaMailSender mailSender;
 
+    private SimpleMailMessage message;
+
+    @BeforeEach
+    void setup() {
+        message = new SimpleMailMessage();
+    }
+
     @Test
-    public void testSendNotification() {
+    void testSendNotification() {
         Notification notification = new Notification();
         notification.setEventId(DEFAULT_UUID);
         Participant participant = new Participant();
         participant.setEmail("test@test.com");
         notification.setParticipant(participant);
-        doNothing().when(mailSender).send(any(SimpleMailMessage.class));
-        service.sendRegistrationNotification(notification);
+        message.setTo(participant.getEmail());
+        message.setSubject("Confirmation: registration for event " + notification.getEventId());
+        message.setText("You are now registered for this event!");
+        doNothing().when(mailSender).send(eq(message));
+        service.sendRegistrationNotificationAsync(notification);
     }
 }

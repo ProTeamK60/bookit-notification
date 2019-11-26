@@ -1,4 +1,4 @@
-package se.knowit.bookitnotification.dto;
+package se.knowit.bookitnotification.model;
 
 import org.junit.jupiter.api.Test;
 import se.knowit.bookitnotification.model.Notification;

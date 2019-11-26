@@ -1,9 +1,7 @@
-package se.knowit.bookitnotification.model;
+package se.knowit.bookitnotification.dto;
 
 import org.junit.jupiter.api.Test;
-import se.knowit.bookitnotification.dto.NotificationDTO;
-import se.knowit.bookitnotification.dto.NotificationMapper;
-import se.knowit.bookitnotification.dto.ParticipantDTO;
+import se.knowit.bookitnotification.model.Notification;
 
 import java.util.UUID;
 
