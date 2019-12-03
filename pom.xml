@@ -44,6 +44,10 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
 		</dependency>
@@ -167,7 +171,31 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.pitest</groupId>
+				<artifactId>pitest-maven</artifactId>
+				<version>1.4.10</version>
+				<configuration>
+					<excludedClasses>
+						<excludedClass>se.knowit.bookitregistration.BookitNotificationApplication</excludedClass>
+					</excludedClasses>
+					<excludedTestClasses>
+					</excludedTestClasses>
+					<excludedMethods>
+						<excludedMethod>equals</excludedMethod>
+						<excludedMethod>canEqual</excludedMethod>
+						<excludedMethod>hashCode</excludedMethod>
+						<excludedMethod>toString</excludedMethod>
+					</excludedMethods>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.pitest</groupId>
+						<artifactId>pitest-junit5-plugin</artifactId>
+						<version>0.10</version>
+					</dependency>
+				</dependencies>
+			</plugin>
 		</plugins>
 	</build>
-
 </project>
