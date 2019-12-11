@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import se.knowit.bookitnotification.dto.NotificationDTO;
+import se.knowit.bookitnotification.dto.NotificationMailDTO;
 import se.knowit.bookitnotification.dto.NotificationMapper;
 import se.knowit.bookitnotification.service.NotificationService;
 
@@ -24,6 +25,12 @@ public class NotificationController {
     @PostMapping(value={"/registration", "/registration/"}, consumes = "application/json", produces = "application/json")
     public ResponseEntity<String> createRegistrationConfirmation(@RequestBody NotificationDTO dto) {
         service.sendRegistrationNotificationAsync(mapper.fromDto(dto));
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping(value = {"/email", "/email/"}, consumes = "application/json", produces = "application/json")
+    public ResponseEntity<String> sendEmail(@RequestBody NotificationMailDTO dto) {
+        service.sendMailAsync(dto);
         return ResponseEntity.noContent().build();
     }
 
