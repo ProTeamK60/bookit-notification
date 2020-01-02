@@ -1,5 +1,6 @@
 package se.knowit.bookitnotification.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -9,13 +10,13 @@ import se.knowit.bookitnotification.model.Notification;
 
 public class NotificationServiceImpl implements NotificationService {
 
+    @Autowired
     private JavaMailSender mailSender;
 
-    private NotificationValidator validator;
+    private final NotificationValidator validator;
 
-    public NotificationServiceImpl(JavaMailSender mailSender) {
+    public NotificationServiceImpl() {
         this.validator = new NotificationValidator();
-        this.mailSender = mailSender;
     }
 
     @Override
