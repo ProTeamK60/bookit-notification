@@ -5,8 +5,8 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
-import se.knowit.bookitnotification.model.NotificationValidator;
 import se.knowit.bookitnotification.model.Notification;
+import se.knowit.bookitnotification.model.NotificationValidator;
 
 public class NotificationServiceImpl implements NotificationService {
 
