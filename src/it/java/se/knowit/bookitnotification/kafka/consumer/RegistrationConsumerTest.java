@@ -7,10 +7,6 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
@@ -21,11 +17,9 @@ import org.springframework.kafka.listener.AcknowledgingConsumerAwareMessageListe
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.kafka.test.context.EmbeddedKafka;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.annotation.DirtiesContext;
 import se.knowit.bookitnotification.model.Participant;
 import se.knowit.bookitnotification.model.Registration;
-import se.knowit.bookitnotification.service.NotificationServiceImpl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,16 +33,9 @@ import java.util.concurrent.atomic.AtomicReference;
         brokerProperties = "listeners=PLAINTEXT://localhost:9092")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @SpringBootTest
-@ExtendWith(MockitoExtension.class)
 public class RegistrationConsumerTest {
 
     public static final String TOPIC = "registrations";
-
-    @InjectMocks
-    private NotificationServiceImpl notificationService;
-
-    @Mock
-    private JavaMailSender mailSender;
 
     @Autowired
     private KafkaListenerEndpointRegistry registry;
