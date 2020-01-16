@@ -10,13 +10,14 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+import se.knowit.bookitnotification.dto.event.EventDTO;
+import se.knowit.bookitnotification.dto.registration.RegistrationDTO;
 import se.knowit.bookitnotification.kafka.consumer.EventConsumer;
 import se.knowit.bookitnotification.kafka.consumer.RegistrationConsumer;
-import se.knowit.bookitnotification.model.Event;
-import se.knowit.bookitnotification.model.Registration;
 import se.knowit.bookitnotification.repository.EventRepository;
 import se.knowit.bookitnotification.service.NotificationService;
 import se.knowit.bookitnotification.servicediscovery.DiscoveryService;
+import se.knowit.bookitnotification.servicediscovery.Instance;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,10 +31,10 @@ public class KafkaConsumerConfiguration {
 
     @Bean
     public Map<String, Object> consumerConfig() {
+        Instance instance = discoveryService.discoverInstance("kafka");
         Map<String, Object> props = new HashMap<>();
-        String bootstrapAddress = discoveryService.discoverInstance("kafka");
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
-                bootstrapAddress);
+                instance.getAddress());
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
                 StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
@@ -44,32 +45,32 @@ public class KafkaConsumerConfiguration {
     }
 
     @Bean
-    public ConsumerFactory<String, Event> eventConsumerFactory() {
+    public ConsumerFactory<String, EventDTO> eventConsumerFactory() {
         Map<String, Object> props = consumerConfig();
         props.put(ConsumerConfig.GROUP_ID_CONFIG,
                 "event-consumer-group");
-        return new DefaultKafkaConsumerFactory(props, new StringDeserializer(), new JsonDeserializer<>(Event.class, false));
+        return new DefaultKafkaConsumerFactory(props, new StringDeserializer(), new JsonDeserializer<>(EventDTO.class, false));
     }
 
     @Bean
-    public ConsumerFactory<String, Registration> registrationConsumerFactory() {
+    public ConsumerFactory<String, RegistrationDTO> registrationConsumerFactory() {
         Map<String, Object> props = consumerConfig();
         props.put(ConsumerConfig.GROUP_ID_CONFIG,
                 "registration-consumer-group");
-        return new DefaultKafkaConsumerFactory(props, new StringDeserializer(), new JsonDeserializer(Registration.class, false));
+        return new DefaultKafkaConsumerFactory(props, new StringDeserializer(), new JsonDeserializer(RegistrationDTO.class, false));
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, Event> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, Event> factory =
+    public ConcurrentKafkaListenerContainerFactory<String, EventDTO> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, EventDTO> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(eventConsumerFactory());
         return factory;
     }
 
     @Bean(name = "registrationListenerContainerFactory")
-    public ConcurrentKafkaListenerContainerFactory<String, Registration> registrationListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, Registration> factory =
+    public ConcurrentKafkaListenerContainerFactory<String, RegistrationDTO> registrationListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, RegistrationDTO> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(registrationConsumerFactory());
         return factory;
@@ -77,8 +78,9 @@ public class KafkaConsumerConfiguration {
 
     @Bean
     @Autowired
-    public EventConsumer eventConsumer(EventRepository repository) { return new EventConsumer(repository); }
-
+    public EventConsumer eventConsumer(EventRepository repository) {
+        return new EventConsumer(repository);
+    }
 
     @Bean
     @Autowired

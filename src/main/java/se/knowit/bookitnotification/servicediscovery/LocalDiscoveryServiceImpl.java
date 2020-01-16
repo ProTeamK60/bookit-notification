@@ -7,11 +7,22 @@ public class LocalDiscoveryServiceImpl implements DiscoveryService {
     private final Environment environment;
     private final static String prefix = "discovery.service.";
 
-    public LocalDiscoveryServiceImpl(Environment environment) { this.environment = environment; }
+    public LocalDiscoveryServiceImpl(Environment environment) {
+        this.environment = environment;
+    }
 
     @Override
-    public String discoverInstance(String serviceName) {
-        return environment.getProperty(prefix + serviceName);
+    public Instance discoverInstance(String serviceName) {
+        Instance instance = null;
+        String address = environment.getProperty(prefix + serviceName);
+
+        if(address != null) {
+            instance = new Instance();
+            String[] ipPort = address.split(":");
+            instance.setInstanceIpv4(ipPort[0]);
+            instance.setInstancePort(ipPort[1]);
+        }
+        return instance;
     }
 
 }

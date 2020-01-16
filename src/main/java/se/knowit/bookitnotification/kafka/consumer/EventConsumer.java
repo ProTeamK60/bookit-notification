@@ -3,16 +3,19 @@ package se.knowit.bookitnotification.kafka.consumer;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.PartitionOffset;
 import org.springframework.kafka.annotation.TopicPartition;
-import se.knowit.bookitnotification.model.Event;
+import se.knowit.bookitnotification.dto.event.EventDTO;
+import se.knowit.bookitnotification.dto.event.EventMapper;
 import se.knowit.bookitnotification.repository.EventRepository;
 
 public class EventConsumer {
 
-    private static final String TOPIC = "event";
+    private static final String TOPIC = "events";
     private final EventRepository repository;
+    private final EventMapper mapper;
 
     public EventConsumer(EventRepository repository) {
         this.repository = repository;
+        this.mapper = new EventMapper();
     }
 
     @KafkaListener(id = "event-listener",
@@ -23,10 +26,9 @@ public class EventConsumer {
                     partitionOffsets = @PartitionOffset(
                             partition = "0",
                             initialOffset = "0")))
-    public void processEvent(Event event) {
-        //TODO: log event with DEBUG level instead.
-        System.out.println("RECEIVED EVENT: " + event);
-        repository.save(event);
+    private void processEvent(EventDTO event) {
+        //TODO: log event received with DEBUG level.
+        repository.save(mapper.fromDTO(event));
     }
 
 

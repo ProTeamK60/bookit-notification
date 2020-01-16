@@ -1,35 +1,32 @@
 package se.knowit.bookitnotification.servicediscovery;
 
 import com.amazonaws.services.servicediscovery.AWSServiceDiscovery;
-import com.amazonaws.services.servicediscovery.AWSServiceDiscoveryClientBuilder;
 import com.amazonaws.services.servicediscovery.model.DiscoverInstancesRequest;
 import com.amazonaws.services.servicediscovery.model.DiscoverInstancesResult;
-import com.amazonaws.services.servicediscovery.model.HealthStatusFilter;
 import com.amazonaws.services.servicediscovery.model.HttpInstanceSummary;
-import org.springframework.beans.factory.annotation.Value;
 
 public class AwsDiscoveryServiceImpl implements DiscoveryService {
 
-    private final AWSServiceDiscovery service;
+    private final AWSServiceDiscovery serviceDiscoverClient;
 
-    @Value("${discover.aws.statusfilter}")
-    private HealthStatusFilter statusFilter;
-
-    public AwsDiscoveryServiceImpl() {
-        service = AWSServiceDiscoveryClientBuilder.defaultClient();
+    public AwsDiscoveryServiceImpl(AWSServiceDiscovery serviceDiscoveryClient) {
+        this.serviceDiscoverClient = serviceDiscoveryClient;
     }
 
     @Override
-    public String discoverInstance(String serviceName) {
-        DiscoverInstancesResult discoverInstancesResult = service.discoverInstances(
-                new DiscoverInstancesRequest()
-                        .withServiceName(serviceName)
-                        .withHealthStatus(statusFilter));
-        String address = null;
-        if(!discoverInstancesResult.getInstances().isEmpty()) {
+    public Instance discoverInstance(String serviceName) {
+        Instance instance = null;
+        DiscoverInstancesResult discoverInstancesResult = serviceDiscoverClient.discoverInstances(
+                new DiscoverInstancesRequest().withServiceName(serviceName));
+
+        if (!discoverInstancesResult.getInstances().isEmpty()) {
             HttpInstanceSummary instanceSummary = discoverInstancesResult.getInstances().get(0);
-            address = instanceSummary.getAttributes().get("AWS_INSTANCE_IPV4");
+            instance = new Instance();
+            instance.setInstanceIpv4(instanceSummary.getAttributes().get("AWS_INSTANCE_IPV4"));
+            instance.setInstancePort(instanceSummary.getAttributes().get("AWS_INSTANCE_PORT"));
+            instance.setRegion(instanceSummary.getAttributes().get("REGION"));
         }
-        return address;
+
+        return instance;
     }
 }

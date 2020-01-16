@@ -29,16 +29,16 @@ public class EventRepositoryMapImpl implements EventRepository {
 
     @Override
     public Event save(Event incomingEvent) {
-        //Event event = eventValidator.ensureEventIsValidOrThrowException(incomingEvent);
-        //assignRequiredIds(event);
-        persistEvent(incomingEvent);
-        return incomingEvent;
+        Event event = eventValidator.ensureEventIsValidOrThrowException(incomingEvent);
+        assignRequiredIds(event);
+        persistEvent(event);
+        return event;
     }
 
 
     private void assignRequiredIds(Event event) {
-        //identityHandler.assignPersistenceIdIfNotSet(event, this);
-        //identityHandler.assignEventIdIfNotSet(event);
+        identityHandler.assignPersistenceIdIfNotSet(event, this);
+        identityHandler.assignEventIdIfNotSet(event);
     }
 
     private void persistEvent(Event event) {
@@ -60,9 +60,9 @@ public class EventRepositoryMapImpl implements EventRepository {
 
     private static class IdentityHandler {
 
-        void assignPersistenceIdIfNotSet(Event event, EventRepositoryMapImpl eventServiceMap) {
+        void assignPersistenceIdIfNotSet(Event event, EventRepositoryMapImpl eventRepositoryMap) {
             if (event.getId() == null) {
-                event.setId(getNextId(eventServiceMap));
+                event.setId(getNextId(eventRepositoryMap));
             }
         }
 
@@ -72,9 +72,9 @@ public class EventRepositoryMapImpl implements EventRepository {
             }
         }
 
-        Long getNextId(EventRepositoryMapImpl eventServiceMap) {
+        Long getNextId(EventRepositoryMapImpl eventRepositoryMap) {
             try {
-                return Collections.max(eventServiceMap.map.keySet()) + 1L;
+                return Collections.max(eventRepositoryMap.map.keySet()) + 1L;
             } catch (NoSuchElementException ignored) {
                 return 1L;
             }

@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.Objects;
 
 public class EventValidator {
+
     private static final String RSVP_ERROR_TEMPLATE = "RVSP of Event at '%s' is set after start of Event at '%s";
     private static final String END_TIME_ERROR_TEMPLATE = "End of Event at '%s' is set before start of Event at '%s";
 
@@ -48,4 +49,5 @@ public class EventValidator {
             throw new IllegalArgumentException(String.format(RSVP_ERROR_TEMPLATE, deadlineRVSP, eventStart));
         }
     }
+
 }

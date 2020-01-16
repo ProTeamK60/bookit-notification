@@ -20,17 +20,6 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    @Async
-    public void sendRegistrationNotificationAsync(Notification notification) {
-        try {
-            sendRegistrationNotification(notification);
-        } catch(IllegalArgumentException | MailException e) {
-            //TODO: log exception.
-            e.printStackTrace();
-        }
-    }
-
-    @Override
     public void sendRegistrationNotification(Notification notification) {
         Notification validNotification = validator.validateNotificationOrElseThrowException(notification);
         mailSender.send(fromRegistrationTemplate(validNotification));

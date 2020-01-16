@@ -1,12 +1,11 @@
 package se.knowit.bookitnotification.kafka.consumer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
@@ -18,8 +17,9 @@ import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
-import se.knowit.bookitnotification.model.Participant;
-import se.knowit.bookitnotification.model.Registration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import se.knowit.bookitnotification.dto.registration.ParticipantDTO;
+import se.knowit.bookitnotification.dto.registration.RegistrationDTO;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,18 +29,20 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 @EmbeddedKafka(partitions = 1,
-        topics = {RegistrationConsumerTest.TOPIC, "event"},
+        topics = {RegistrationConsumerTest.EVENT_TOPIC, RegistrationConsumerTest.REGISTRATION_TOPIC},
         brokerProperties = "listeners=PLAINTEXT://localhost:9092")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @SpringBootTest
+@ExtendWith(SpringExtension.class)
 public class RegistrationConsumerTest {
 
-    public static final String TOPIC = "registrations";
+    public static final String REGISTRATION_TOPIC = "registrations";
+    public static final String EVENT_TOPIC = "events";
 
     @Autowired
     private KafkaListenerEndpointRegistry registry;
 
-    private KafkaTemplate<String, Registration> kafkaTemplate;
+    private KafkaTemplate<String, RegistrationDTO> kafkaTemplate;
 
     @BeforeEach
     public void setup() {
@@ -52,48 +54,44 @@ public class RegistrationConsumerTest {
         ConcurrentMessageListenerContainer<?, ?> container =
                 (ConcurrentMessageListenerContainer<?, ?>) registry.getListenerContainer("registration-listener");
         container.stop();
-        AcknowledgingConsumerAwareMessageListener<String, Registration> messageListener =
-                (AcknowledgingConsumerAwareMessageListener<String, Registration>) container.getContainerProperties().getMessageListener();
+        AcknowledgingConsumerAwareMessageListener<String, RegistrationDTO> messageListener =
+                (AcknowledgingConsumerAwareMessageListener<String, RegistrationDTO>) container.getContainerProperties().getMessageListener();
 
         CountDownLatch latch = new CountDownLatch(1);
-        AtomicReference<Registration> receivedRegistration = new AtomicReference<>();
+        AtomicReference<RegistrationDTO> receivedRegistration = new AtomicReference<>();
 
         container.getContainerProperties()
-                .setMessageListener((AcknowledgingConsumerAwareMessageListener<String, Registration>) (record, acknowledgment, consumer) -> {
+                .setMessageListener((AcknowledgingConsumerAwareMessageListener<String, RegistrationDTO>) (record, acknowledgment, consumer) -> {
                     receivedRegistration.set(record.value());
                     latch.countDown();
                 });
         container.start();
 
-        Registration registration = createDefaultRegistration();
-        kafkaTemplate.send(TOPIC, registration);
+        RegistrationDTO registration = createDefaultRegistration();
+        kafkaTemplate.send(REGISTRATION_TOPIC, registration);
         Assertions.assertTrue(latch.await(10, TimeUnit.SECONDS));
         Assertions.assertEquals(registration, receivedRegistration.get());
     }
 
-    private ProducerFactory<String, Registration> producerFactory() {
+    private ProducerFactory<String, RegistrationDTO> producerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        return new DefaultKafkaProducerFactory(props, new StringSerializer(), new JsonSerializer(mapper));
+        return new DefaultKafkaProducerFactory(props, new StringSerializer(), new JsonSerializer());
     }
 
-    private KafkaTemplate<String, Registration> createKafkaTemplate() {
+    private KafkaTemplate<String, RegistrationDTO> createKafkaTemplate() {
         return new KafkaTemplate(producerFactory());
     }
 
-    private Registration createDefaultRegistration() {
-        Registration registration = new Registration();
-        registration.setId(1L);
-        registration.setEventId(UUID.randomUUID());
-        registration.setRegistrationId(UUID.randomUUID());
-        registration.setParticipant(new Participant());
+    private RegistrationDTO createDefaultRegistration() {
+        RegistrationDTO registration = new RegistrationDTO();
+        registration.setEventId(UUID.randomUUID().toString());
+        registration.setRegistrationId(UUID.randomUUID().toString());
+        registration.setParticipant(new ParticipantDTO());
         registration.getParticipant().setEmail("test@test.com");
-        registration.getParticipant().setId(1L);
         return registration;
     }
 
