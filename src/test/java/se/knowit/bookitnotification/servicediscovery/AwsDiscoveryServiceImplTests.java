@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,8 +38,8 @@ public class AwsDiscoveryServiceImplTests {
         expected.setInstanceIpv4(ipv4);
         expected.setInstancePort(port);
         expected.setRegion(region);
-        DiscoverInstancesRequest request = createDiscoverInstanceRequest(serviceName);
-        DiscoverInstancesResult result = createDiscoverInstanceResult(ipv4, port, region);
+        DiscoverInstancesRequest request = new DiscoverInstancesRequest().withServiceName(serviceName);
+        DiscoverInstancesResult result = createDiscoverInstancesResult(serviceName, ipv4, port, region);
 
         when(discoveryServiceClient.discoverInstances(eq(request))).thenReturn(result);
         Instance instance = discoveryService.discoverInstance(serviceName);
@@ -47,21 +48,25 @@ public class AwsDiscoveryServiceImplTests {
 
     @Test
     public void testDiscoverInstanceNonExisting() {
+        String serviceName = "fakeService";
+        DiscoverInstancesRequest request = new DiscoverInstancesRequest().withServiceName(serviceName);
+        DiscoverInstancesResult result = new DiscoverInstancesResult().withInstances(Collections.emptyList());
 
+        when(discoveryServiceClient.discoverInstances(eq(request))).thenReturn(result);
+        Instance instance = discoveryService.discoverInstance(serviceName);
+        Assertions.assertNull(instance);
     }
 
-    private DiscoverInstancesRequest createDiscoverInstanceRequest(String serviceName) {
-        return new DiscoverInstancesRequest().withServiceName(serviceName);
-    }
 
-    private DiscoverInstancesResult createDiscoverInstanceResult(String ipv4, String port, String region) {
+    private DiscoverInstancesResult createDiscoverInstancesResult(String serviceName, String ipv4, String port, String region) {
         HttpInstanceSummary instanceSummary = new HttpInstanceSummary();
         Map<String,String> instanceAttr = new HashMap<>();
         instanceAttr.put("AWS_INSTANCE_IPV4", ipv4);
         instanceAttr.put("AWS_INSTANCE_PORT", port);
         instanceAttr.put("REGION", region);
         instanceSummary.setAttributes(instanceAttr);
-        instanceSummary.setServiceName("fakeService");
+        instanceSummary.setServiceName(serviceName);
         return new DiscoverInstancesResult().withInstances(instanceSummary);
     }
+
 }
