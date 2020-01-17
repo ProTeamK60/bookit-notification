@@ -3,7 +3,6 @@ package se.knowit.bookitnotification.servicediscovery;
 import com.amazonaws.services.servicediscovery.AWSServiceDiscovery;
 import com.amazonaws.services.servicediscovery.model.DiscoverInstancesRequest;
 import com.amazonaws.services.servicediscovery.model.DiscoverInstancesResult;
-import com.amazonaws.services.servicediscovery.model.HttpInstanceSummary;
 
 public class AwsDiscoveryServiceImpl implements DiscoveryService {
 
@@ -14,19 +13,21 @@ public class AwsDiscoveryServiceImpl implements DiscoveryService {
     }
 
     @Override
-    public Instance discoverInstance(String serviceName) {
-        Instance instance = null;
+    public DiscoveryServiceResult discoverInstances(String serviceName) {
+        DiscoveryServiceResult result = new DiscoveryServiceResult();
         DiscoverInstancesResult discoverInstancesResult = serviceDiscoverClient.discoverInstances(
                 new DiscoverInstancesRequest().withServiceName(serviceName));
 
         if (!discoverInstancesResult.getInstances().isEmpty()) {
-            HttpInstanceSummary instanceSummary = discoverInstancesResult.getInstances().get(0);
-            instance = new Instance();
-            instance.setInstanceIpv4(instanceSummary.getAttributes().get("AWS_INSTANCE_IPV4"));
-            instance.setInstancePort(instanceSummary.getAttributes().get("AWS_INSTANCE_PORT"));
-            instance.setRegion(instanceSummary.getAttributes().get("REGION"));
+            discoverInstancesResult.getInstances().forEach(instanceSummary -> {
+                Instance instance = new Instance();
+                instance.setInstanceIpv4(instanceSummary.getAttributes().get("AWS_INSTANCE_IPV4"));
+                instance.setInstancePort(instanceSummary.getAttributes().get("AWS_INSTANCE_PORT"));
+                instance.setRegion(instanceSummary.getAttributes().get("REGION"));
+                result.addInstance(instance);
+            });
         }
 
-        return instance;
+        return result;
     }
 }

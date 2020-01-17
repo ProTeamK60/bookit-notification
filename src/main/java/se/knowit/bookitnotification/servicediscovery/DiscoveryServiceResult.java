@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
-public class ServiceDiscoveryResult {
+public class DiscoveryServiceResult {
 
     private List<Instance> instances;
 
-    public ServiceDiscoveryResult() {
+    public DiscoveryServiceResult() {
         this.instances = new ArrayList();
     }
 

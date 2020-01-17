@@ -25,15 +25,15 @@ public class LocalDiscoveryServiceImplTests {
     public void testDiscoverInstance() {
         String address = "0.0.0.0:80";
         when(env.getProperty(eq("discovery.service.testService"))).thenReturn(address);
-        Instance instance = service.discoverInstance("testService");
-        Assertions.assertEquals(address, instance.getAddress());
+        DiscoveryServiceResult result = service.discoverInstances("testService");
+        Assertions.assertEquals(address, result.getAddresses());
     }
 
     @Test
     public void testDiscoverInstanceNonExisting() {
         when(env.getProperty(any())).thenReturn(null);
-        Instance instance = service.discoverInstance("testService");
-        Assertions.assertNull(instance);
+        DiscoveryServiceResult result = service.discoverInstances("testService");
+        Assertions.assertTrue(result.getInstances().isEmpty());
     }
 
 }

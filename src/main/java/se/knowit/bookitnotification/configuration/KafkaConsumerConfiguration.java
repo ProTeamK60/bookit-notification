@@ -17,7 +17,7 @@ import se.knowit.bookitnotification.kafka.consumer.RegistrationConsumer;
 import se.knowit.bookitnotification.repository.EventRepository;
 import se.knowit.bookitnotification.service.NotificationService;
 import se.knowit.bookitnotification.servicediscovery.DiscoveryService;
-import se.knowit.bookitnotification.servicediscovery.Instance;
+import se.knowit.bookitnotification.servicediscovery.DiscoveryServiceResult;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,10 +31,10 @@ public class KafkaConsumerConfiguration {
 
     @Bean
     public Map<String, Object> consumerConfig() {
-        Instance instance = discoveryService.discoverInstance("kafka");
+        DiscoveryServiceResult result = discoveryService.discoverInstances("kafka");
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
-                instance.getAddress());
+                result.getAddresses());
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
                 StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,

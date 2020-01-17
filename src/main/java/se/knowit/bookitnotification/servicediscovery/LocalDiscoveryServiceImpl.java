@@ -12,17 +12,18 @@ public class LocalDiscoveryServiceImpl implements DiscoveryService {
     }
 
     @Override
-    public Instance discoverInstance(String serviceName) {
-        Instance instance = null;
+    public DiscoveryServiceResult discoverInstances(String serviceName) {
+        DiscoveryServiceResult result = new DiscoveryServiceResult();
         String address = environment.getProperty(prefix + serviceName);
 
         if(address != null) {
-            instance = new Instance();
+            Instance instance = new Instance();
             String[] ipPort = address.split(":");
             instance.setInstanceIpv4(ipPort[0]);
             instance.setInstancePort(ipPort[1]);
+            result.addInstance(instance);
         }
-        return instance;
+        return result;
     }
 
 }

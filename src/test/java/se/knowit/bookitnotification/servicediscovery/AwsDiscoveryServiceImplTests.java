@@ -42,8 +42,10 @@ public class AwsDiscoveryServiceImplTests {
         DiscoverInstancesResult result = createDiscoverInstancesResult(serviceName, ipv4, port, region);
 
         when(discoveryServiceClient.discoverInstances(eq(request))).thenReturn(result);
-        Instance instance = discoveryService.discoverInstance(serviceName);
-        Assertions.assertEquals(expected, instance);
+        DiscoveryServiceResult discoveryResult = discoveryService.discoverInstances(serviceName);
+
+        Assertions.assertEquals(1, discoveryResult.getInstances().size());
+        Assertions.assertEquals(expected, discoveryResult.getInstances().get(0));
     }
 
     @Test
@@ -53,8 +55,8 @@ public class AwsDiscoveryServiceImplTests {
         DiscoverInstancesResult result = new DiscoverInstancesResult().withInstances(Collections.emptyList());
 
         when(discoveryServiceClient.discoverInstances(eq(request))).thenReturn(result);
-        Instance instance = discoveryService.discoverInstance(serviceName);
-        Assertions.assertNull(instance);
+        DiscoveryServiceResult discoveryResult = discoveryService.discoverInstances(serviceName);
+        Assertions.assertTrue(discoveryResult.getInstances().isEmpty());
     }
 
 

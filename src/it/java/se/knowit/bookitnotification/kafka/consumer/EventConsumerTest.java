@@ -40,7 +40,6 @@ public class EventConsumerTest {
 
     public static final String EVENT_TOPIC = "events";
     public static final String REGISTRATION_TOPIC = "registrations";
-
     @Autowired
     private EventRepository eventRepository;
 
