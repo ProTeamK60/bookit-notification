@@ -44,6 +44,6 @@ class NotificationServiceTests {
         message.setSubject("Confirmation: registration for event " + notification.getEventId());
         message.setText("You are now registered for this event!");
         doNothing().when(mailSender).send(eq(message));
-        service.sendRegistrationNotificationAsync(notification);
+        service.sendRegistrationNotification(notification);
     }
 }

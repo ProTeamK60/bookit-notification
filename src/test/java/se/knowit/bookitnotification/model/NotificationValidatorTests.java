@@ -1,13 +1,11 @@
 package se.knowit.bookitnotification.model;
 
 import org.junit.jupiter.api.Test;
-import se.knowit.bookitnotification.model.Notification;
-import se.knowit.bookitnotification.model.NotificationValidator;
-import se.knowit.bookitnotification.model.Participant;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class NotificationValidatorTests {
 
@@ -45,6 +43,7 @@ public class NotificationValidatorTests {
         Notification incomingNotification = new Notification();
         incomingNotification.setEventId(DEFAULT_EVENT_ID);
         incomingNotification.setParticipant(new Participant());
+        incomingNotification.getParticipant().setEmail("");
         assertThrows(IllegalArgumentException.class, () -> validator.validateNotificationOrElseThrowException(incomingNotification));
     }
 }
