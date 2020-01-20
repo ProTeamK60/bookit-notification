@@ -26,12 +26,15 @@ import java.util.Map;
 @EnableKafka
 public class KafkaConsumerConfiguration {
 
-    @Autowired
-    private DiscoveryService discoveryService;
-
+    private final DiscoveryService discoveryService;
+    
+    public KafkaConsumerConfiguration(DiscoveryService discoveryService) {
+        this.discoveryService = discoveryService;
+    }
+    
     @Bean
     public Map<String, Object> consumerConfig() {
-        DiscoveryServiceResult result = discoveryService.discoverInstances("kafka");
+        DiscoveryServiceResult result = discoveryService.discoverInstances("bookit", "kafka");
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
                 result.getAddresses());

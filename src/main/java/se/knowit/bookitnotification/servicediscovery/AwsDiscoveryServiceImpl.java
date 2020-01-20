@@ -13,7 +13,7 @@ public class AwsDiscoveryServiceImpl implements DiscoveryService {
     }
 
     @Override
-    public DiscoveryServiceResult discoverInstances(String serviceName) {
+    public DiscoveryServiceResult discoverInstances(String namespaceName, String serviceName) {
         DiscoveryServiceResult result = new DiscoveryServiceResult();
         DiscoverInstancesResult discoverInstancesResult = serviceDiscoverClient.discoverInstances(
                 new DiscoverInstancesRequest().withServiceName(serviceName));

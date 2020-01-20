@@ -12,7 +12,7 @@ public class LocalDiscoveryServiceImpl implements DiscoveryService {
     }
 
     @Override
-    public DiscoveryServiceResult discoverInstances(String serviceName) {
+    public DiscoveryServiceResult discoverInstances(String namespaceName, String serviceName) {
         DiscoveryServiceResult result = new DiscoveryServiceResult();
         String address = environment.getProperty(prefix + serviceName);
 
