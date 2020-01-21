@@ -39,7 +39,9 @@ public class AwsDiscoveryServiceImplTests {
         expected.setInstanceIpv4(ipv4);
         expected.setInstancePort(port);
         expected.setRegion(region);
-        DiscoverInstancesRequest request = new DiscoverInstancesRequest().withServiceName(serviceName);
+        DiscoverInstancesRequest request = new DiscoverInstancesRequest()
+                .withNamespaceName(namespaceName)
+                .withServiceName(serviceName);
         DiscoverInstancesResult result = createDiscoverInstancesResult(serviceName, ipv4, port, region);
 
         when(discoveryServiceClient.discoverInstances(eq(request))).thenReturn(result);
@@ -53,7 +55,9 @@ public class AwsDiscoveryServiceImplTests {
     public void testDiscoverInstanceNonExisting() {
         String namespaceName = "fakeNamespace";
         String serviceName = "fakeService";
-        DiscoverInstancesRequest request = new DiscoverInstancesRequest().withServiceName(serviceName);
+        DiscoverInstancesRequest request = new DiscoverInstancesRequest()
+                .withNamespaceName(namespaceName)
+                .withServiceName(serviceName);
         DiscoverInstancesResult result = new DiscoverInstancesResult().withInstances(Collections.emptyList());
 
         when(discoveryServiceClient.discoverInstances(eq(request))).thenReturn(result);
