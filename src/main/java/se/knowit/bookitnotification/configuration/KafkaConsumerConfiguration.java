@@ -52,7 +52,7 @@ public class KafkaConsumerConfiguration {
         Map<String, Object> props = consumerConfig();
         props.put(ConsumerConfig.GROUP_ID_CONFIG,
                 "event-consumer-group");
-        return new DefaultKafkaConsumerFactory(props, new StringDeserializer(), new JsonDeserializer<>(EventDTO.class, false));
+        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<>(EventDTO.class, false));
     }
 
     @Bean
@@ -60,7 +60,7 @@ public class KafkaConsumerConfiguration {
         Map<String, Object> props = consumerConfig();
         props.put(ConsumerConfig.GROUP_ID_CONFIG,
                 "registration-consumer-group");
-        return new DefaultKafkaConsumerFactory(props, new StringDeserializer(), new JsonDeserializer(RegistrationDTO.class, false));
+        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<>(RegistrationDTO.class, false));
     }
 
     @Bean

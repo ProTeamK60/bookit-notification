@@ -39,6 +39,7 @@ public class RegistrationConsumerTest {
     public static final String REGISTRATION_TOPIC = "registrations";
     public static final String EVENT_TOPIC = "events";
 
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
     private KafkaListenerEndpointRegistry registry;
 
@@ -79,11 +80,11 @@ public class RegistrationConsumerTest {
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
 
-        return new DefaultKafkaProducerFactory(props, new StringSerializer(), new JsonSerializer());
+        return new DefaultKafkaProducerFactory<>(props, new StringSerializer(), new JsonSerializer<>());
     }
 
     private KafkaTemplate<String, RegistrationDTO> createKafkaTemplate() {
-        return new KafkaTemplate(producerFactory());
+        return new KafkaTemplate<>(producerFactory());
     }
 
     private RegistrationDTO createDefaultRegistration() {
