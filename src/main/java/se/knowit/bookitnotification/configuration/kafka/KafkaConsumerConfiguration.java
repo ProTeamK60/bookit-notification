@@ -1,4 +1,4 @@
-package se.knowit.bookitnotification.configuration;
+package se.knowit.bookitnotification.configuration.kafka;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -31,7 +31,7 @@ public class KafkaConsumerConfiguration {
 
     @Bean
     public Map<String, Object> consumerConfig() {
-        DiscoveryServiceResult result = discoveryService.discoverInstances("kafka");
+        DiscoveryServiceResult result = discoveryService.discoverInstances("bookit", "kafka");
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
                 result.getAddresses());
@@ -57,7 +57,7 @@ public class KafkaConsumerConfiguration {
         Map<String, Object> props = consumerConfig();
         props.put(ConsumerConfig.GROUP_ID_CONFIG,
                 "registration-consumer-group");
-        return new DefaultKafkaConsumerFactory(props, new StringDeserializer(), new JsonDeserializer(RegistrationDTO.class, false));
+        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<>(RegistrationDTO.class, false));
     }
 
     @Bean

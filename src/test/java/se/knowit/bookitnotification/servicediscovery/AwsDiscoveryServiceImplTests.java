@@ -29,6 +29,7 @@ public class AwsDiscoveryServiceImplTests {
 
     @Test
     public void testDiscoverInstance() {
+        String namespaceName = "fakeNamespace";
         String serviceName = "fakeService";
         String ipv4 = "0.0.0.0";
         String port = "80";
@@ -38,11 +39,11 @@ public class AwsDiscoveryServiceImplTests {
         expected.setInstanceIpv4(ipv4);
         expected.setInstancePort(port);
         expected.setRegion(region);
-        DiscoverInstancesRequest request = new DiscoverInstancesRequest().withServiceName(serviceName);
+        DiscoverInstancesRequest request = new DiscoverInstancesRequest().withNamespaceName(namespaceName).withServiceName(serviceName);
         DiscoverInstancesResult result = createDiscoverInstancesResult(serviceName, ipv4, port, region);
 
         when(discoveryServiceClient.discoverInstances(eq(request))).thenReturn(result);
-        DiscoveryServiceResult discoveryResult = discoveryService.discoverInstances(serviceName);
+        DiscoveryServiceResult discoveryResult = discoveryService.discoverInstances(namespaceName, serviceName);
 
         Assertions.assertEquals(1, discoveryResult.getInstances().size());
         Assertions.assertEquals(expected, discoveryResult.getInstances().get(0));
@@ -50,12 +51,13 @@ public class AwsDiscoveryServiceImplTests {
 
     @Test
     public void testDiscoverInstanceNonExisting() {
+        String namespaceName = "fakeNamespace";
         String serviceName = "fakeService";
-        DiscoverInstancesRequest request = new DiscoverInstancesRequest().withServiceName(serviceName);
+        DiscoverInstancesRequest request = new DiscoverInstancesRequest().withNamespaceName(namespaceName).withServiceName(serviceName);
         DiscoverInstancesResult result = new DiscoverInstancesResult().withInstances(Collections.emptyList());
 
         when(discoveryServiceClient.discoverInstances(eq(request))).thenReturn(result);
-        DiscoveryServiceResult discoveryResult = discoveryService.discoverInstances(serviceName);
+        DiscoveryServiceResult discoveryResult = discoveryService.discoverInstances(namespaceName, serviceName);
         Assertions.assertTrue(discoveryResult.getInstances().isEmpty());
     }
 

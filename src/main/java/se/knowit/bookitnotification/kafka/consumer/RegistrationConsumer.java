@@ -22,8 +22,8 @@ public class RegistrationConsumer {
             topics = RegistrationConsumer.TOPIC,
             groupId = "notification-consumer-group",
             containerFactory = "registrationListenerContainerFactory")
-    private void processRegistration(RegistrationDTO registration) {
-        //TODO: log registration received with DEBUG level instead.
+    private void consumeMessage(RegistrationDTO registration) {
+        //TODO: log.
         notificationService.sendRegistrationNotification(buildNotification(registration));
     }
 

@@ -26,7 +26,7 @@ public class EventConsumer {
                     partitionOffsets = @PartitionOffset(
                             partition = "0",
                             initialOffset = "0")))
-    private void processEvent(EventDTO event) {
+    private void consumeMessage(EventDTO event) {
         //TODO: log event received with DEBUG level.
         repository.save(mapper.fromDTO(event));
     }
