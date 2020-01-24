@@ -17,7 +17,7 @@ public class ProdConfiguration {
     private String awsRegion;
 
     @Bean
-    public DiscoveryService AwsDiscoveryServiceImpl() {
+    public DiscoveryService awsDiscoveryServiceImpl() {
         return new AwsDiscoveryServiceImpl(awsServiceDiscoveryClient());
     }
 

@@ -14,7 +14,7 @@ public class DevConfiguration {
 
     @Bean
     @Autowired
-    public DiscoveryService LocalDiscoveryServiceImpl(Environment environment) {
+    public DiscoveryService localDiscoveryServiceImpl(Environment environment) {
         return new LocalDiscoveryServiceImpl(environment);
     }
 
